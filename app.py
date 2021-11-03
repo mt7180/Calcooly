@@ -1,6 +1,5 @@
 from flask import Flask, flash, redirect, render_template, request, session
-
-import extraFunctions as extrafunc
+from extraFunctions import *
 
 app = Flask(__name__)
 
@@ -16,7 +15,7 @@ def main():
             flash("Please type function.")
             return redirect("/")
         input_str = request.form.get("input")
-        output = extrafunc.parseInput(input_str)
+        output = functions2diagram(input2functionset(input_str))
         
         #in case of Exception
         if output[2]==True:

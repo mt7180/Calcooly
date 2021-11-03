@@ -11,15 +11,15 @@ class Function:
         fun: parsed function
         tag: optional tag if function has to be further processed/ calculated
         num: # of function in function set
-        free: tuple of free variables"""
+        free: list of free variables"""
         self.fun = fun
         self.num = num
         self.freeVariables = free
-        if tag:
-            self.tag = tag
-
+        self.tag = tag
+    
     def __str__(self):
         return str(self.fun)
+
     def integrateFunc(self, variable):
         return integrate(self.fun, variable)
 

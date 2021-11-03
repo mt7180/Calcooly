@@ -8,6 +8,7 @@ class FunctionSet:
     def __init__(self):
         """Initialization"""
         self.functionSet=[]
+        self.err = ""
 
     def __str__(self):
         """output when printed"""
