@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session
-from extraFunctions import *
+#from extraFunctions import *
+import myFunctionSet as my_fs
 
 app = Flask(__name__)
 
@@ -15,7 +16,8 @@ def main():
             flash("Please type function.")
             return redirect("/")
         input_str = request.form.get("input")
-        fs = input2functionset(input_str)
+        fs=my_fs.FunctionSet()
+        fs.input2functionset(input_str)
         output = fs.functions2diagram()
         
         #in case of Exception

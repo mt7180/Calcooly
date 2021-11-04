@@ -5,6 +5,7 @@ from sympy.parsing.sympy_parser import parse_expr
 from sympy.parsing.sympy_parser import standard_transformations, convert_xor, implicit_multiplication
 from io import BytesIO
 import base64
+from extraFunctions import extraFunctions
 
 class FunctionSet:
     """Represents the whole set of functions"""
@@ -15,6 +16,7 @@ class FunctionSet:
         """Initialization"""
         self.functionSet=[]
         self.err = ""
+        self.tag = ""
 
     def __str__(self):
         """output when printed"""
@@ -41,6 +43,7 @@ class FunctionSet:
             out=[]
             #also sets digram size of smp.plot:
             plt.rcParams['figure.figsize'] = 3, 3
+            
             for i, f in enumerate(self.functionSet):
                 if len(f.freeVariables) > 0:
                     #out.append("y"+str(i+1)+"="+smp.latex(f.fun))
@@ -72,3 +75,30 @@ class FunctionSet:
                 return (out, fig64, False)
         else:
             return (self.err, fig64, True)
+
+    def input2functionset(self, input_raw):
+        """parse raw input string and put functions to function set"""
+        input = [inp.strip() for inp in input_raw.split(';')]
+        transformations = (standard_transformations + (implicit_multiplication,) + (convert_xor,))
+        x, y, z = smp.symbols('x y z')
+        #funset=self.FunctionSet()
+        
+        for i, inp in enumerate(input):
+            tag=""
+            extrafun =extraFunctions(inp)
+            if extrafun[0]=="ODE":
+                self.tag="ODE"
+            elif extrafun[0]=="Integral":
+                tag="Integral"
+            try:
+                sol = parse_expr(extrafun[1], transformations=transformations)
+                
+                if len(sol.free_symbols) > 0:
+                    self.add_function(sol, list(sol.free_symbols),tag)
+            except AttributeError:
+                if self.err == "":
+                    self.err = "parsing your function returned an error"
+            except Exception as e:
+                #add just first error
+                if self.err == "":
+                    self.err = e
