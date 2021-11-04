@@ -16,6 +16,7 @@
         let text = str.slice(7)
         document.getElementById("input").value = text;
     }
+    
     function textarea(){
         var element=document.getElementById("input");
         
@@ -83,32 +84,19 @@
     {% if message.in %}
        
         <div class="out">
-            
             <div class="container_out_left">
                 {% if message.chart %}
                     <img src='data:image/png;base64,{{message.chart}}'/>
                 {% endif %}
-            
             </div>
             <div class="container_out_right" name="output" id="output"> 
-                <div>
-                    {% if message.in %}
-                        {%for entry in message.out %} 
-                            <p class="output">$${{entry}}$$</p>
-                        {% endfor %}
-                    {% else %}
-                        <p class="output">{{message.out}}</p>
-                    {% endif %}
-                </div>
-                <div>
-                    {% if message.in %}
-                    <p id="inputCopy" onclick="copyInput()"> Input: {{message.in}}</p>
+                
+                {%for entry in message.out %} 
+                    <div style="text-align: left">$${{entry}}$$</div>
+                {% endfor %}
 
-                    
-                    {% else %}
-                    <p ></p>
-                    {% endif %}
-                </div>
+                <div id="inputCopy" style="text-align: center">Input: {{message.in}}</div>
+                
             </div>
         </div>
     {% endif %} 
