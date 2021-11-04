@@ -67,18 +67,19 @@ button:hover{
 
 .container_out_left{
 
-  /*border:1px solid grey; */
+  border:1px solid grey; 
   /*padding-left:5%;
   padding-right:5%;
   padding-right:5%;*/
+  padding: 5px 5px;
 }
 .container_out_right{
-  /*border:1px solid grey;*/
-  padding-left:5%;
+  border:1px solid grey;
+  /*padding-left:5%;*/
   padding-right:5%;
 }
 .out{
-  width:30%;
+  width:35%;
   margin:auto;
   display:flex;
   /*border:1px solid black;*/
@@ -86,12 +87,13 @@ button:hover{
   -moz-border-radius: 20px;
   border-radius: 20px;
   border: 1px solid #ccc;
-  color: grey;
+  /*color: grey;*/
   /*color: #3c4043;*/
   margin-top: 3%;
   font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-size: 1rem;
   line-height: 1rem;
+  /*text-align: left;*/
   align-items: center;
   justify-content:center;
 
@@ -169,11 +171,12 @@ input[type=submit]{
 }
 .output{
     /*color: #3c4043;*/
+    border:1px solid grey;
     color:grey;
     font-size: 2rem;
     font-weight: 500;
-    text-align: center;
-    margin:auto;
+    /*text-align: left;*/
+    /*margin:auto;*/
     font-family: "Google Sans",Roboto,Arial,sans-serif;
 }
 /*
