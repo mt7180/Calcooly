@@ -9,28 +9,13 @@
     <title>Calcooly</title>
 </head>
 <script>
-
-    document.addEventListener("DOMContentLoaded", function(){
-        /*When page is loaded and history page pasted input string to output form, 
-        string is also copied in text field and is submitted via click event */
-        let str= document.getElementById("inputCopy").innerHTML;
-        var pathArray = window.location.pathname.split('/');
-        if (str && pathArray.length > 2){
-            let text = str.slice(7)
-            document.getElementById("input").value = text;
-            document.inp.calc.click();  
-        }
-    });
-
+    //document.getElementById("output").innerHTML = {{txt}};
     function copyInput() {
-        // copy input from output for back to input text field
         let str= document.getElementById("inputCopy").innerHTML;
         let text = str.slice(7)
         document.getElementById("input").value = text;
     }
-
     function textarea(){
-        /* input text field is exchanged to teaxtarea wit mor space for input*/
         var element=document.getElementById("input");
         
         //document.body.appendChild(x);
@@ -68,11 +53,10 @@
         //element = null; 
         parent.replaceChild(x,element)
        // document.body.appendChild(x);
-       
+
     }
-
+    
 </script>
-
 <body>
     {% if get_flashed_messages() %}
         <header>
@@ -82,68 +66,48 @@
         </header>
     {% endif %}
     <div class="container">
-        <div style="margin-bottom:20px;">
-            <img src="/static/Pendulum.jpg">
-        </div>
+        <img src="/static/Pendulum.jpg">
     </div>
-
-    <form name="inp" action="/" method="post">
+    
+    <form action="/" method="post">
         <div class="container" >
-            <div style="display:inline-flex; flex-direction:column">
-                <div style="display:inline-flex; flex-direction:row">
-                    <input type="text" class="input" id="input" name="input" autofocus autocomplete="off" placeholder="Type Your Function"> 
-                    <!-- <textarea class="input" id="input" name="input" autofocuss autocomplete="off" rows="4" cols="50"></textarea> -->
-                    <button type="button" id="add" onclick="textarea()">+</button>
-                </div>
-                <div id="notation_menu" >
-                    <a  href="/notation" target="_blank" class="notation" >Notation Conventions</a>
-                    <a href="/history" class="notation">History</a>
-                </div>
-            </div>
+            <input type="text" class="input" id="input" name="input" autofocus autocomplete="off" placeholder="Type Your Function"> 
+           <!-- <textarea class="input" id="input" name="input" autofocuss autocomplete="off" rows="4" cols="50"></textarea> -->
+            <button type="button" id="add" onclick="textarea()">+</button>
         </div>
-        
-        <div class="container" ><div>
-            <input type="submit" value="Calc" name="calc" id="calc">
-        </div></div>
+        <div class="notation" a  href="notation.html" target="_blank">Notation Conventions</a></div>
+        <div class="container" >
+            <input type="submit" value="Calc">
+        </div>
     </form>
     {% if message.in %}
-        
-        <div class="container rahmen">
-            <div>
+       
+        <div class="out">
+            
+            <div class="container_out_left">
                 {% if message.chart %}
                     <img src='data:image/png;base64,{{message.chart}}'/>
                 {% endif %}
+            
             </div>
-            
-            <div name="output" id="output">
-            <form action="/" method="post">
-                <div class="container">
-                    <right_out id="save_menu"><input class="menu" id="save" name="action" type="submit" value="{ Save for Later }">
-                    </right_out>
-                </div>
-            
-                {% if message.out %}
-                    {%for entry in message.out %} 
-                        <div class="container" ><right_out>$${{entry}}$$</right_out></div>
-                    {% endfor %}
-                {% endif %}
-
-                {% if message.in %}
-                <div class="container"><right_out id="inputCopy" name="input" onclick=copyInput() >Input: {{message.in}}</right_out></div>
-                <div class="container">
-                    <right_out>
-                        <input type="hidden" name="cinput" value="{{message.in}}">                      
-                    </right_out>
-                </div>
-
-                {% else %}
-                <p ></p>
-                {% endif %}
-            </form>
+            <div class="container_out_right" name="output" id="output">
+                <div class="save" id="save" onclick=saveInput()>{ Save for later }</div>
+                    {% if message.out %}
+                        
+                        {%for entry in message.out %} 
+                            <div class="output" >$${{entry}}$$</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if message.in %}
+                    <div class="output2" id="inputCopy" onclick=copyInput() >Input: {{message.in}}</div>
+                    {% else %}
+                    <p ></p>
+                    {% endif %}
+                
             </div>
         </div>
-
     {% endif %} 
-</form>
+    
+    
 </body>
 </html>

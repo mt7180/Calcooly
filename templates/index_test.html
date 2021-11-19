@@ -1,0 +1,58 @@
+<!doctype html>
+<title>Example</title>
+<style>
+.container {
+  display: flex;
+  font-size: 4vh;
+  color: red;
+  background: white;
+  margin: .1em;
+  padding: .3em;
+  /*border: 1px solid black;*/
+  text-align: center;
+  flex: 1;
+}
+.container > div {
+  /*font-size: 2vh;*/
+  color: grey;
+  background: pink;
+  margin: .1em;
+  padding: .3em;
+  border: 1px solid black;
+  /*align-items: center;*/
+  /*text-align: center;*/
+  flex: 1;
+}
+.container > right_out{
+    text-align:center;
+    flex: 1;
+    font-size: 3vh;
+     margin: .1em;
+  padding: .3em;
+    /*border: 1px solid pink;*/
+}
+.container .container > div {
+  background: pink;
+  border: 1px solid blue;
+  color: black;
+
+  
+}
+.rahmen{
+    border: 2px solid pink;
+    margin-top: 50px;
+    align-items: stretch;
+}
+</style>
+<div class="container"><div>1</div></div>
+<div class="container"><div>2</div></div>
+<div class="container rahmen">
+       
+    <div>1</div>
+    <div>
+        <div class="container" ><right_out style="text-align: right;">{ save for later }</right_out></div>
+        <div class="container"><right_out>Formulas</right_out></div>
+        <div class="container"><right_out>Input</right_out></div>
+
+    </div>
+</div>

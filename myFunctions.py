@@ -24,8 +24,9 @@ class Function:
     def __str__(self):
         return str(self.fun)
 
-    def integrateFunc(self, variable):
-        return integrate(self.fun, variable)
+    def integrateFunc(self):
+        print(self.fun)
+        return integrate(self.fun)
 
     def differentiateFunc(self, variable):
         return diff(self.fun, variable)
