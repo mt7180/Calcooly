@@ -19,6 +19,7 @@ class FunctionSet:
         self.functionSet=[]
         self.err = ""
         self.tag = ""
+        self.limit=""
 
     def __str__(self):
         """output when printed"""
@@ -60,6 +61,12 @@ class FunctionSet:
             try:
                 for i, f in enumerate(self.functionSet):
                     if len(f.freeVariables) > 0 and f.plot == True:
+                        if self.limit:
+                            tmin = self.limit.split(',')[0]
+                            tmax = self.limit.split(',')[1]
+                        else:
+                            tmin = -5
+                            tmax = 5
                         #out.append("y"+str(i+1)+"="+smp.latex(f.fun))
                         out.append("f_{"+str(i+1)+"}(")
                         for j, var in enumerate(f.freeVariables):
@@ -68,12 +75,15 @@ class FunctionSet:
                             else:
                                 out[i] += str(var)
                         out[i] += ")=" + smp.latex(f.fun)
-                        p1 = smp.plot(f.fun, (var, -5,5), show=False)  # ToDo give possibility to make user input vor plotting range (";[-5,5]")
+
+                        p1 = smp.plot(f.fun, (var, tmin,tmax), show=False)  # ToDo give possibility to make user input vor plotting range (";[-5,5]")
                         p1[0].label=f.fun
                         if plot1 is not None:
                             plot1.extend(p1)
                         else:
                             plot1 = p1
+                    else:
+                        out.append(smp.latex(f.fun))
             
                 if plot1:
                     #Key legend.loc: 'upper_right' is not a valid value for legend.loc; supported values are ['best', 'upper right', 'upper left', 'lower left', 'lower right', 'right', 'center left', 'center right', 'lower center', 'upper center', 'center']
@@ -88,6 +98,8 @@ class FunctionSet:
                     # Embed the result in the html output
                     fig64 = base64.b64encode(buf.getbuffer()).decode("ascii")
                     return (out, fig64, False)
+                else:
+                    return(out,"",False)
             except TypeError:
                 if self.err == "":
                     self.err = "your function can not be plotted -> forgot to give a keyword like 'ODE: ?"
@@ -122,7 +134,7 @@ class FunctionSet:
         try:
             if not input_raw:
                 raise Exception('something went wrong #1')
-            print(input_raw)
+            #print(input_raw)
             input = [inp.strip() for inp in input_raw.split(';')]
             #from sympy.parsing.sympy_parser import (parse_expr, standard_transformations, convert_equals_signs) 
             #t = standard_transformations + (convert_equals_signs,)
@@ -140,19 +152,22 @@ class FunctionSet:
                 #     self.ode2functionset(input)
                 # elif extrafun[0]=="Integral":
                 #     tag="Integral"
-            
-                sol = parse_expr(inp, transformations=transformations)
+                if not inp: # if current segment of ";"-seperated input is empty
+                    continue
+                sol = parse_expr(inp, transformations=transformations, local_dict={'e': E})
                 print('hier ', sol)
                 
                 if len(sol.free_symbols) > 0:
                     if self.tag == "Integral":
-                        print(sol)
-                        #if len(sol.free_symbols)> 1:
-                        #    raise Exception('too much free variables given, try to use integrate(<integrand>, <integration variable>)')
-                        sol=integrate(sol) # only one free symbol should be given
-                        print(sol)
+                        sol = integrate(sol) # only one free symbol should be given
+                    elif self.tag == "Derivative":
+                        sol = diff(sol)  
                     self.add_function(sol, list(sol.free_symbols),True,"")  #ToDo: implement tag (for integration or so) for single Function and replace "" in function call
-                print(self.functionSet)
+                #print(self.functionSet)
+                    
+
+                else:
+                    self.add_function(sol, "",False,"")
         except AttributeError:
             if self.err == "":
                 self.err = "parsing your function returned an error"
@@ -163,27 +178,31 @@ class FunctionSet:
 
     def extrafunc(self, input_raw):
         """parse input for keywords for extra-function and give tags/ call extra-functions"""
-        if ":" in input_raw:
-            print(input_raw)
-            input = [inp.strip() for inp in input_raw.split(':')]
+        #if "[" in input_raw:
+        input_pre = [inp.strip() for inp in input_raw.split('[')]
+        if len(input_pre)>1:
+            if "]" in input_pre[1]:  # remember: only one limit must be given!
+                self.limit = input_pre[1][:-1]
+
+        if ":" in input_pre[0]:
+            print("#2: ", input_pre[0])
+            input = [inp.strip() for inp in input_pre[0].split(':')]
             if input[0].upper() == "ODE":
-                self.tag="ODE"
+                self.tag = "ODE"
                 #self.ode2functionset(input[1])
                 return input[1]
             elif input[0].upper() == "INTEGRAL":
-                self.tag="Integral"
-                print(input[1])
+                self.tag = "Integral"
+                #print(input[1])
+                return input[1]
+            elif input[0].upper() == "DERIVATIVE":
+                self.tag = "Derivative"
                 return input[1]
             else:
                 self.err = 'tag: ' + input[0] + ' not known!'
                 return input[1]
         else:
-            return input_raw
-    
-    def process_tags(self): 
-        #derzeit überflüssig
-        if self.tag == "ODE":
-            print("todo")
+            return input_pre[0]
 
     def ode2functionset(self, input_raw):
         """Parse, calculate and put ode into Function set"""
@@ -228,20 +247,26 @@ class FunctionSet:
             print(sols_lhs, sols_rhs,"free sym d: ", free_sym_d)
             print(f"S_0: {S_0}")
             #print(input[0].free_symbols) 
+            print("#3: ", sol)
 
             free_sym=[args.func for fd in sols_lhs for args in fd.args if args.is_Function]
-            #print([*free_sym,free_sym_d])
+            print([*free_sym,free_sym_d])
             inp_f=[smp.lambdify([*free_sym,free_sym_d], sol, 'numpy') for sol in sols_rhs] 
-            
+            print("ploop")
             def dSdt(S, t):
                 #yy1, yy2 =S
                 #return [ans(t,yy1,yy2) for ans in inp_f]
                 return [ans(*S,t) for ans in inp_f] # *S: unpacked S_vector    
 
-            tmax = float(max(*[S0*20 for S0 in S_0], 1))  # gibt es noch bessere Möglichkeiten tmax festzulegen?!
-            
-            t = np.linspace(0, tmax, 100)  #ToDo automatisch anpassen
-            
+            if self.limit:
+                tmin = self.limit.split(',')[0]
+                tmax = self.limit.split(',')[1]
+            else:
+                tmin = 0
+                tmax = float(max(*[S0*20 for S0 in S_0], 1))  # gibt es bessere Möglichkeiten tmax festzulegen?!
+            print(tmin, tmax)
+            t = np.linspace(float(tmin), float(tmax), 100)  #ToDo automatisch anpassen
+            print(tmin, tmax)
             #Solve ODE with SciPy
             sol=odeint(dSdt, y0=S_0, t=t)
             for i, y in enumerate(sol.T):

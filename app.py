@@ -59,6 +59,7 @@ def main(fid=""):
         
             #in case of Exception
             if output[2]==True:
+                #print("Except")
                 flash(output[0])
                 message = {"out":"", "in": input_str, "chart":""}
             #when parsing was successfull
@@ -96,7 +97,7 @@ def history():
         db = sqlite3.connect(database)
         db.row_factory = sqlite3.Row  #wichtig, da sonst nur eine liste von tuples generiert wird, jetzt ist es ein dict
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM history")
+        cursor.execute("SELECT * FROM history ORDER BY id DESC")
         entries = cursor.fetchall()     
         db.commit()
         db.close()
@@ -107,6 +108,9 @@ def history():
         flash("SQL Error!")
         return redirect("/")
 
+@app.route("/notation")
+def notation():
+    return render_template("notation.html")
 
 def rawInput2functionSet(input_str):
     fs = my_fs.FunctionSet()
