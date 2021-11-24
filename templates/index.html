@@ -45,6 +45,7 @@
             x.setAttribute('cols',50);
             x.setAttribute('rows', 4);
             x.setAttribute("placeholder","Type Your Function");
+            x.setAttribute("spellcheck","false");
             if (element.value){
                 x.innerHTML=element.value;
             }
@@ -55,6 +56,7 @@
             x.setAttribute("type", "text");
             x.setAttribute("placeholder","Type Your Function");
             x.setAttribute("autocomplete", "off");
+            x.setAttribute("spellcheck","false");
             if (element.innerHTML){
                 x.setAttribute("value",element.innerHTML);
             }
@@ -92,7 +94,7 @@
         <div class="container" >
             <div style="display:inline-flex; flex-direction:column">
                 <div style="display:inline-flex; flex-direction:row">
-                    <input type="text" class="input" id="input" name="input" autofocus autocomplete="off" placeholder="Type Your Function"> 
+                    <input type="text" class="input" id="input" name="input" autofocus autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Type Your Function"> 
                     <!-- <textarea class="input" id="input" name="input" autofocuss autocomplete="off" rows="4" cols="50"></textarea> -->
                     <button type="button" id="add" onclick="textarea()">+</button>
                 </div>

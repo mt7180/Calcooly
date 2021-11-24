@@ -76,12 +76,21 @@ class FunctionSet:
                                 out[i] += str(var)
                         out[i] += ")=" + smp.latex(f.fun)
 
-                        p1 = smp.plot(f.fun, (var, tmin,tmax), show=False)  # ToDo give possibility to make user input vor plotting range (";[-5,5]")
-                        p1[0].label=f.fun
-                        if plot1 is not None:
-                            plot1.extend(p1)
-                        else:
-                            plot1 = p1
+                        if len(f.freeVariables) < 2:
+                            p1 = smp.plot(f.fun, (var, tmin,tmax), show=False)  # ToDo give possibility to make user input vor plotting range (";[-5,5]")
+                            p1[0].label=f.fun
+                            if plot1 is not None:
+                                plot1.extend(p1)
+                            else:
+                                plot1 = p1
+                        elif len(f.freeVariables) < 3:
+
+                            p1 = plotting.plot3d(f.fun, (f.freeVariables[0],tmin, tmax), (f.freeVariables[1],tmin,tmax),surface_color='green', show = false)  # ToDo give possibility to make user input vor plotting range (";[-5,5]")
+                            p1[0].label=f.fun
+                            if plot1 is not None:
+                                plot1.extend(p1)
+                            else:
+                                plot1 = p1
                     else:
                         out.append(smp.latex(f.fun))
             
@@ -134,7 +143,7 @@ class FunctionSet:
         try:
             if not input_raw:
                 raise Exception('something went wrong #1')
-            #print(input_raw)
+            print(input_raw)
             input = [inp.strip() for inp in input_raw.split(';')]
             #from sympy.parsing.sympy_parser import (parse_expr, standard_transformations, convert_equals_signs) 
             #t = standard_transformations + (convert_equals_signs,)
@@ -154,6 +163,8 @@ class FunctionSet:
                 #     tag="Integral"
                 if not inp: # if current segment of ";"-seperated input is empty
                     continue
+                print('hier ', inp)
+                #sol = parse_expr(inp, transformations=transformations)
                 sol = parse_expr(inp, transformations=transformations, local_dict={'e': E})
                 print('hier ', sol)
                 
@@ -179,7 +190,7 @@ class FunctionSet:
     def extrafunc(self, input_raw):
         """parse input for keywords for extra-function and give tags/ call extra-functions"""
         #if "[" in input_raw:
-        input_pre = [inp.strip() for inp in input_raw.split('[')]
+        input_pre = [inp.strip() for inp in input_raw.split("limit[")]
         if len(input_pre)>1:
             if "]" in input_pre[1]:  # remember: only one limit must be given!
                 self.limit = input_pre[1][:-1]
@@ -190,6 +201,7 @@ class FunctionSet:
             if input[0].upper() == "ODE":
                 self.tag = "ODE"
                 #self.ode2functionset(input[1])
+                print("#4", input[1])
                 return input[1]
             elif input[0].upper() == "INTEGRAL":
                 self.tag = "Integral"
@@ -206,26 +218,25 @@ class FunctionSet:
 
     def ode2functionset(self, input_raw):
         """Parse, calculate and put ode into Function set"""
-        
+        print("piiiiiiiep")
         try:
             transformations = (standard_transformations + (convert_xor,) +(convert_equals_signs,))
-            input = [parse_expr(inp.strip(), transformations=transformations, evaluate=False) for inp in input_raw.split(';')]
-            sols_rhs=[]
-            sols_lhs=[]
-            deriv_free_symb=[]
-            S_0=[]
-            
+            input = [parse_expr(inp.strip(), transformations=transformations, evaluate=True) for inp in input_raw.split(';')]
+            sols_rhs = []
+            sols_lhs = []
+            deriv_free_symb = []
+            S_0 = []
             #for every single input
             for i,inp in enumerate(input):
                 try:
                     #for every second input (start conditions not to be considered here)
-                    if i%2==0:
+                    if i%2 == 0:
                         fd_set=inp.find(smp.Derivative)
                         # find highest derivative:
                         d_max = (0, "")
                         for fd in fd_set:
                             if fd.derivative_count > d_max[0]: dmax = (fd.derivative_count,fd) 
-                            #print(dmax)
+                           # print(dmax)
                         
                         sol=smp.solveset(inp, (dmax[1]))
                         sols_rhs.append(list(sol)[0])  # wandle set in Liste um, auch wenn nicht optimal => takes just the first solution, but should be sufficient here

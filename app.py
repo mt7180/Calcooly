@@ -42,7 +42,6 @@ def main(fid=""):
                 print("nothing in here!")
         elif "calc" in request.form:
             # Calc
-            print("piep")
             if not request.form.get("input"):
                 flash("Please type function.")
                 return redirect("/")
@@ -53,7 +52,7 @@ def main(fid=""):
         fs = rawInput2functionSet(input_str)
         #-----------------------------------------------------------
         #Output todo: Aufräumen
-        print("tag: ",fs.tag, "err: ", fs.err)
+        #print("tag: ",fs.tag, "err: ", fs.err)
         if fs.err == "":        #nur wenn kein err vorgefallen ist
             output = fs.functions2diagram()
         
