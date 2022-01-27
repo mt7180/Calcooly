@@ -1,5 +1,7 @@
 from myFunctions import *
 import matplotlib.pyplot as plt
+import matplotlib as mplt
+mplt.use('Agg')
 import sympy as smp
 import numpy as np
 from sympy.parsing.sympy_parser import parse_expr
@@ -40,7 +42,7 @@ class FunctionSet:
         FunctionSet.last_id += 1
         func = Eq(ode_list[0], ode_list[1])
         f = Function(func, FunctionSet.last_id, ode_list[2], plot, tag)
-        print("funs: ", f.fun)
+        # print("funs: ", f.fun)
         f.x = x
         f.y = y
         self.functionSet.append(f)
@@ -185,7 +187,7 @@ class FunctionSet:
                 self.limit = input_pre[1][:-1]
 
         if ":" in input_pre[0]:
-            print("#2: ", input_pre[0])
+            # print("#2: ", input_pre[0])
             input = [inp.strip() for inp in input_pre[0].split(':')]
             if input[0].upper() == "ODE":
                 self.tag = "ODE"

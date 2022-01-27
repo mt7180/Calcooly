@@ -3,27 +3,41 @@
 <head>
     <!-- http://getbootstrap.com/docs/4.5/ -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-
     <link href="/static/styles.css" rel="stylesheet">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <title>Calcooly</title>
 </head>
 <script>
-    //document.getElementById("output").innerHTML = {{txt}};
+
+    document.addEventListener("DOMContentLoaded", function(){
+        /*When page is loaded and history page pasted input string to output form, 
+        string is also copied in text field and is submitted via click event */
+        let str = document.getElementById("inputCopy").innerHTML;
+        var pathArray = window.location.pathname.split('/');
+        if (str && pathArray.length > 2){
+            let text = str.slice(7)
+            document.getElementById("input").value = text;
+            document.inp.calc.click();  
+        }
+    });
+
     function copyInput() {
-        let str= document.getElementById("inputCopy").innerHTML;
+        // copy input from output for back to input text field
+        let str = document.getElementById("inputCopy").innerHTML;
         let text = str.slice(7)
         document.getElementById("input").value = text;
     }
+
     function textarea(){
+        /* input text field is exchanged to teaxtarea wit mor space for input*/
         var element=document.getElementById("input");
         
-        //document.body.appendChild(x);
+        // document.body.appendChild(x);
 
         var parent = element.parentNode;
-        //parent.removeChild( element );
-        if ( element.type == 'text' ) {
+        // parent.removeChild( element );
+        if (element.type == 'text') {
             var x=document.createElement("TEXTAREA");
            // x.setAttribute("type", "textarea");
             
@@ -31,20 +45,22 @@
             x.setAttribute('cols',50);
             x.setAttribute('rows', 4);
             x.setAttribute("placeholder","Type Your Function");
+            x.setAttribute("spellcheck","false");
             if (element.value){
                 x.innerHTML=element.value;
             }
         }
-            //parent.innerHTML = '<textarea id="' + element.id + '" cols=50 rows=5>' + element.value +'</textarea>';
+            // parent.innerHTML = '<textarea id="' + element.id + '" cols=50 rows=5>' + element.value +'</textarea>';
         else {
             var x = document.createElement("INPUT");
             x.setAttribute("type", "text");
             x.setAttribute("placeholder","Type Your Function");
             x.setAttribute("autocomplete", "off");
+            x.setAttribute("spellcheck","false");
             if (element.innerHTML){
                 x.setAttribute("value",element.innerHTML);
             }
-            //parent.innerHTML = '<input type="text" class="input"  placeholder="Type Your Function" id="' + element.id + '"   value="' + element.value + '" />';
+            // parent.innerHTML = '<input type="text" class="input"  placeholder="Type Your Function" id="' + element.id + '"   value="' + element.value + '" />';
         }
         
         x.setAttribute('name', element.name);
@@ -54,10 +70,9 @@
         //element = null; 
         parent.replaceChild(x,element)
        // document.body.appendChild(x);
-
     }
-    
 </script>
+
 <body>
     {% if get_flashed_messages() %}
         <header>
@@ -67,51 +82,69 @@
         </header>
     {% endif %}
     <div class="container">
-        <img src="/static/Pendulum.jpg">
-    </div>
-    
-    <form action="/" method="post">
-        <div class="container" >
-            <input type="text" class="input" id="input" name="input" autofocus autocomplete="off" placeholder="Type Your Function"> 
-           <!-- <textarea class="input" id="input" name="input" autofocuss autocomplete="off" rows="4" cols="50"></textarea> -->
-            <button type="button" id="add" onclick="textarea()">+</button>
-        </div>      
-        <div class="container" >
-            <input type="submit" value="Calc">
+        <div style="margin-bottom:20px;">
+            <!--<div id = "naming">C a l c o o l y.</div> -->
+            <img src="/static/Pendulum.jpg">
         </div>
+    </div>
+
+    <form name="inp" action="/" method="post">
+        <div class="container" >
+            <div style="display:inline-flex; flex-direction:column">
+                <div style="display:inline-flex; flex-direction:row">
+                    <input type="text" class="input" id="input" name="input" autofocus autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Type Your Function"> 
+                    <!-- <textarea class="input" id="input" name="input" autofocuss autocomplete="off" rows="4" cols="50"></textarea> -->
+                    <button type="button" id="add" onclick="textarea()">+</button>
+                </div>
+                <div id="notation_menu" >
+                    <a  href="/notation" target="_blank" class="notation" >Notation Conventions</a>
+                    <a href="/history" class="notation">History</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container" ><div>
+            <input type="submit" value="Calc" name="calc" id="calc">
+        </div></div>
     </form>
     {% if message.in %}
-       
-        <div class="out">
-            
-            <div class="container_out_left">
+        
+        <div class="container rahmen">
+            <div>
                 {% if message.chart %}
                     <img src='data:image/png;base64,{{message.chart}}'/>
                 {% endif %}
-            
             </div>
-            <div class="container_out_right" name="output" id="output"> 
-                <div>
-                    {% if message.in %}
-                        {%for entry in message.out %} 
-                            <p class="output">$${{entry}}$$</p>
-                        {% endfor %}
-                    {% else %}
-                        <p class="output">{{message.out}}</p>
-                    {% endif %}
+            
+            <div name="output" id="output">
+            <form action="/" method="post">
+                <div class="container">
+                    <right_out id="save_menu"><input class="menu" id="save" name="action" type="submit" value="{ Save for Later }">
+                    </right_out>
                 </div>
-                <div>
-                    {% if message.in %}
-                    <p id="inputCopy" onclick="copyInput()"> Input: {{message.in}}</p>
+            
+                {% if message.out %}
+                    {%for entry in message.out %} 
+                        <div class="container" ><right_out>$${{entry}}$$</right_out></div>
+                    {% endfor %}
+                {% endif %}
 
-                    
-                    {% else %}
-                    <p ></p>
-                    {% endif %}
+                {% if message.in %}
+                <div class="container"><right_out id="inputCopy" name="input" onclick=copyInput() >Input: {{message.in}}</right_out></div>
+                <div class="container">
+                    <right_out>
+                        <input type="hidden" name="cinput" value="{{message.in}}">                      
+                    </right_out>
                 </div>
+
+                {% else %}
+                <p ></p>
+                {% endif %}
+            </form>
             </div>
         </div>
+
     {% endif %} 
-    
+</form>
 </body>
 </html>
