@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- http://getbootstrap.com/docs/4.5/ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link href="/static/styles.css" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    
+    <title>Calcooly History</title>
+    <head>
+        <style>
+        a:link, a:visited {
+        height: 40px;
+        font-size:2vh;    
+        padding:5px 12px; 
+        background:#ccc; 
+        border:0px none;
+        margin-top: 30px;
+        cursor:pointer;
+   /* margin: auto;
+    transform:translateX(-15px);*/
+   /* -webkit-border-radius: 20px;*/
+        border-radius: 40px;
+        color: rgb(70, 69, 69);
+        }
+        
+        a:hover, a:active {
+          background-color: grey;
+        }
+        </style>
+        </head>
+</head>
+
+<body>
+    {% if get_flashed_messages() %}
+        <header>
+            <div class="alert alert-primary border text-center" style="background-color: rgb(241, 241, 243); color:black" role="alert">
+                {{ get_flashed_messages() | join(" ") }}
+            </div>
+        </header>
+    {% endif %}
+
+    <div class="container">
+        <div>
+            <!--<div id = "naming">C a l c o o l y.</div> -->
+            <img src="/static/Pendulum.jpg">
+        </div>
+    </div>
+
+    <div class="jumbotron" style="background-color: white;height:50px; width:400px; padding-top:0px;padding-left:100px;">       
+        <h2>Saved Functions</h2>
+        <div style="font-size:2hv;"><a href="/">back</a></div>
+    </div>
+    
+    <div>
+        <table id=myTable>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Function</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through the database entries to display them in the table -->
+            {% for entry in entries %}
+                <tr>
+                    <td>{{entry.id}}</td>
+                    <td><a href='{{ url_for("main" , fid= entry.id) }}'>{{entry.name}}</a></td> 
+                    <td>{{entry.dt}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <input type="hidden" name="choice" value="">
+    </div>
+</body>
