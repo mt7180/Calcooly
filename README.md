@@ -1,5 +1,5 @@
 # Calcooly
-#### Video Demo:  https://youtu.be/xITUv_DUPKo
+
 #### Description:
 
 Calcooly is a flask web application, which is an advanced calculator based on python to calculate and visualize 2d and 3d functions.
