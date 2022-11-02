@@ -39,9 +39,9 @@ def default_function(expr, function_set)-> None:
             print("sol:", sol, list(sol.free_symbols))
             function_set.functions.append(Function(sol, inp, list(sol.free_symbols)))
     except AttributeError:
-        function_set._err.append("parsing your function returned an error")
+        function_set._err += "parsing your function returned an error"
     except Exception as e:
-         function_set._err.append(e)
+         function_set._err += e
     print("errors: ",  function_set._err)
     return
 

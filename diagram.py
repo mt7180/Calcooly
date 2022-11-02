@@ -9,12 +9,12 @@ class Diagram:
         self.figure = None
         self._err = False
 
-    def generate_2D_symbolic(self, functions, err):
+    def generate_2D_symbolic(self, functionSet):
         self.figure = ""
         plot1 = None
         plt.rcParams['figure.figsize'] = 5, 5
-        if not functions.limit:
-            functions.limit = [-5,5]
+        if not functionSet.limit:
+            functionSet.limit = [-5,5]
         return self.figure
 
     def generate_3D_symbolic(self, functions, err):

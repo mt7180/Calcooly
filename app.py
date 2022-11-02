@@ -1,6 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, session
 import sqlite3
-import myFunctionSet as my_fs
+
+from calcooly import Calcooly
 
 app = Flask(__name__)
 
@@ -48,20 +49,24 @@ def main(fid = ""):
 
         # in every POST mode process Input string or copied input
         # ------------------Process Input -------------------------
-        fs = rawInput2functionSet(input_str)
+        fs = Calcooly()
+        fs.parse_raw_input(input_str)
         # ---------------------------------------------------------
-        if fs.err == "":        # nur wenn kein err vorgefallen ist
-            output = fs.functions2diagram()
+        if fs._err == "":        # nur wenn kein err vorgefallen ist
+            #output = fs.functions2diagram()
+            diagram = fs.get_diagram()
+            latex_legend = fs.get_latex_functions()
+            print(latex_legend)
             # in case of Exception
-            if output[2] == True:
+            if diagram._err:
                 # print("Except")
-                flash(output[0])
+                flash(diagram._err)
                 message = {"out":"", "in": input_str, "chart":""}
             # when parsing was successfull
             else:
-                message={"out": output[0], "in": input_str, "chart": output[1]}
+                message={"out": latex_legend, "in": input_str, "chart": diagram}
         else:
-            flash(fs.err)
+            flash(fs._err)
             message = {"out": "", "in": input_str, "chart": ""}
         return render_template("index.html", message = message)
 
@@ -102,15 +107,6 @@ def history():
 def notation():
     return render_template("notation.html")
 
-def rawInput2functionSet(input_str):
-    """ parse raw input """
-    fs = my_fs.FunctionSet()
-    input = fs.extrafunc(input_str)  # searches for keywords as ODE or Integral
-    if fs.tag == "ODE":
-        fs.ode2functionset(input)
-    else:
-        fs.input2functionset(input)
-    return fs
 
 if __name__ == "__main__":
     app.run()

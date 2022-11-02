@@ -7,7 +7,7 @@ class Calcooly():
         self.limit = []
         self.functions = []
         self._strategy = None
-        self._err = []
+        self._err = ""
     
     def __str__(self):
         return str(self.functions)
@@ -51,7 +51,7 @@ class Calcooly():
 
     def get_diagram(self):
         diagram = Diagram()
-        return diagram.generate_diagram(self.functions, self._err)
+        return diagram.generate_diagram(self)
 
 if __name__ == "__main__":
     app = Calcooly()
