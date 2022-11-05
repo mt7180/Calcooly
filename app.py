@@ -90,7 +90,7 @@ def history():
     """Show history"""
     try:
         db = sqlite3.connect(database)
-        db.row_factory = sqlite3.Row  #wichtig, da sonst nur eine liste von tuples generiert wird, jetzt ist es ein dict
+        db.row_factory = sqlite3.Row  #wichtig, da sonst nur eine liste von tuples generiert wird, so ist es ein dict
         cursor = db.cursor()
         cursor.execute("SELECT * FROM history ORDER BY id DESC")
         entries = cursor.fetchall()
