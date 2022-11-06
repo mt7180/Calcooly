@@ -51,7 +51,8 @@ class Calcooly():
 
     def get_diagram(self):
         diagram = Diagram()
-        return diagram.generate_diagram(self)
+        diagram.generate_diagram(self)
+        return diagram
 
 if __name__ == "__main__":
     app = Calcooly()

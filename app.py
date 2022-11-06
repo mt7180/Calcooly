@@ -54,17 +54,19 @@ def main(fid = ""):
         # ---------------------------------------------------------
         if fs._err == "":        # nur wenn kein err vorgefallen ist
             #output = fs.functions2diagram()
-            diagram = fs.get_diagram()
             latex_legend = fs.get_latex_functions()
+            try:
+                diagram = fs.get_diagram()
+            except Exception as e:
+                print("Error #1: ", e)
             print(latex_legend)
             # in case of Exception
             if diagram._err:
-                # print("Except")
                 flash(diagram._err)
                 message = {"out":"", "in": input_str, "chart":""}
             # when parsing was successfull
             else:
-                message={"out": latex_legend, "in": input_str, "chart": diagram}
+                message={"out": latex_legend, "in": input_str, "chart": diagram.figure}
         else:
             flash(fs._err)
             message = {"out": "", "in": input_str, "chart": ""}
