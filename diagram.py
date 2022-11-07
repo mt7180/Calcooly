@@ -13,16 +13,45 @@ class Diagram:
 
 
     def generate_2D_symbolic(self, function_set):
-        if not function_set.limit:
-            function_set.limit = [-5,5]
-        #plot1 = None
+       
         functions = {f.symbolic_function: f.free_variables[0] for f in function_set.functions}
+        
+        self._plot = smp.plot(
+            *functions.keys(),
+            ([*functions.values()][0], function_set.limits[0], function_set.limits[1]),
+            show = False
+        )
+
+    def generate_3D_symbolic(self, function_set):
+        #x, y, z = smp.symbols('x y z')
+        functions = {f.symbolic_function: f.free_variables for f in function_set.functions}
+        free_vars = [*functions.values()][0] # only for the first function, todo: check if same vars for other functions
+
+        self._plot = smp.plotting.plot3d(
+            *functions.keys(), 
+            (free_vars[0], function_set.limits[0], function_set.limits[1]), 
+            (free_vars[1], function_set.limits[0], function_set.limits[1]),
+            surface_color='green', show = False
+        )
+        
+
+    def generate_2D_points(self,function_set):
+        pass
+
+    def generate_diagram(self, function_set):
+        if not function_set.limits:
+            function_set.limits = [-5,5]
         try:
-            plt.switch_backend('Agg')   # no GUI initialized, dont needed
+            plt.switch_backend('Agg')   # without GUI initialization, not needed
             plt.rcParams['figure.figsize'] = 5, 5
             plt.rcParams['legend.loc']='upper right'
-        
-            self._plot = smp.plot(*functions.keys(),([*functions.values()][0],-5,5), show = False)
+            max_vars = max([len(f.free_variables) for f in function_set.functions])
+            if not max_vars:
+                self.generate_2D_points(function_set)
+            elif max_vars < 2:
+                self.generate_2D_symbolic(function_set)
+            elif max_vars < 3:
+                self.generate_3D_symbolic(function_set)
             self._plot.legend=True         
             backend = self._plot.backend(self._plot)
             backend.process_series()
@@ -31,25 +60,7 @@ class Diagram:
             
             # Embed the result in the html output
             self.figure = base64.b64encode(buffer.getbuffer()).decode("ascii")
-            
-            buffer.close()
-        except Exception as e:
-            self._err = e
-        return self
-
-    def generate_3D_symbolic(self, functions):
-        p1 = plotting.plot3d(f.fun, (f.freeVariables[0],tmin, tmax), (f.freeVariables[1],tmin,tmax),surface_color='green', show = false)  # ToDo give possibility to make user input vor plotting range (";[-5,5]")
-        
-
-    def generate_2D_points(self,function_set):
-        pass
-
-    def generate_diagram(self, function_set):
-        max_vars = max([len(f.free_variables) for f in function_set.functions])
-        if not max_vars:
-            self.generate_2D_points(function_set)
-        elif max_vars < 2:
-            self.generate_2D_symbolic(function_set)
-        elif max_vars < 3:
-            self.generate_3D_symbolic(function_set)
+        except Exception as ex:
+            self._err += str(ex)
+        buffer.close()
 

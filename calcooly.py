@@ -4,7 +4,7 @@ from diagram import Diagram
 class Calcooly():
     def __init__(self)-> None:
         self.key = "defaultkey"
-        self.limit = []
+        self.limits = []
         self.functions = []
         self._strategy = None
         self._err = ""
@@ -20,9 +20,9 @@ class Calcooly():
             if '[' in expr:
                 split_indx = expr.rfind("[")
                 limits = expr[split_indx+1:-1]
-                self.limits = [int(limit) for limit in limits.split(',')]
+                self.limits = [float(limit) for limit in limits.split(',')]
                 return expr[:split_indx].strip()
-            self.err += "limit error"
+            self._err += "limit error"
         return expr
 
     def extract_keywords(self, expr: str)-> str:
@@ -51,7 +51,10 @@ class Calcooly():
 
     def get_diagram(self):
         diagram = Diagram()
-        diagram.generate_diagram(self)
+        try:
+            diagram.generate_diagram(self)
+        except Exception as ex:
+            self._err += str(ex)
         return diagram
 
 if __name__ == "__main__":

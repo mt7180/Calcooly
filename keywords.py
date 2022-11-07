@@ -8,6 +8,7 @@ from function import Function
 keyword_map = {}
 
 def keyword(func):
+    """register keyword automatically in keyword_map"""
     keyword_map[func.__name__]=func
     return func
 
@@ -40,10 +41,10 @@ def default_function(expr, function_set)-> None:
             function_set.functions.append(Function(sol, inp, list(sol.free_symbols)))
     except AttributeError:
         function_set._err += "parsing your function returned an error"
-    except Exception as e:
-         function_set._err += e
+    except Exception as ex:
+        function_set._err += str(ex)
     print("errors: ",  function_set._err)
-    return
+
 
     def ode(expr, err):
         pass

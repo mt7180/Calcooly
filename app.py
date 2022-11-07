@@ -52,13 +52,13 @@ def main(fid = ""):
         fs = Calcooly()
         fs.parse_raw_input(input_str)
         # ---------------------------------------------------------
-        if fs._err == "":        # nur wenn kein err vorgefallen ist
+        if not fs._err:
             #output = fs.functions2diagram()
             latex_legend = fs.get_latex_functions()
-            try:
-                diagram = fs.get_diagram()
-            except Exception as e:
-                print("Error #1: ", e)
+            #try:
+            diagram = fs.get_diagram()
+            #except Exception as e:
+                #print("Error #1: ", e)
             print(latex_legend)
             # in case of Exception
             if diagram._err:
