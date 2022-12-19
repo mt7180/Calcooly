@@ -41,6 +41,8 @@ def default_function(expr, function_set)-> None:
                 )
             print("sol:", sol, list(sol.free_symbols))
             function_set.functions.append(Function(sol, inp, list(sol.free_symbols)))
+            for free_var in sol.free_symbols:
+                function_set.free_vars.add(free_var)
     except AttributeError:
         function_set._err += "parsing your function returned an error"
     except Exception as ex:
@@ -117,6 +119,8 @@ def ode(expr, function_set):
             f.x = t
             f.y = y
             function_set.functions.append(f )
+            for free_var in [*free_sym,free_sym_d]:
+                function_set.free_vars.add(free_var)
     
     except Exception as e:
         #if function_set.err=="": #add just first error

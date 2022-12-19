@@ -6,6 +6,7 @@ class Calcooly():
         self.plot = "symbolic"
         self.limits = []
         self.functions = []
+        self.free_vars = set()
         self._strategy = None
         self._err = ""
     

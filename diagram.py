@@ -8,8 +8,7 @@ import traceback  # error handling
 
 class Diagram:
 
-    @staticmethod
-    def move_sympyplot_to_axes(p, ax): # ax has to be a tuple
+    def move_sympyplot_to_axes(self, p, ax): # ax has to be a tuple
         backend = p.backend(p)
         backend.ax = ax
         backend.process_series()
@@ -18,6 +17,7 @@ class Diagram:
             axis.spines['bottom'].set_position('zero')
             axis.spines['top'].set_color('none')
         plt.close(backend.fig)
+        # return backend.ax
 
     def __init__(self):
         self.figure = ""
@@ -25,15 +25,25 @@ class Diagram:
         self._plot = None
 
 
-    def generate_2D_symbolic(self, function_set):
+    def generate_2D_symbolic(self, function_set, ax):
         if not function_set.limits:
             function_set.limits = [-5,5]
         functions = {f.symbolic_function: f.free_variables[0] for f in function_set.functions}
-        self._plot = smp.plot(
-            *functions.keys(),
-            ([*functions.values()][0], function_set.limits[0], function_set.limits[1]),
-            show = False
-        )
+        # self._plot = smp.plot(
+        for func, vars in functions.items():
+            p1 = smp.plot(
+                func,
+                (vars, function_set.limits[0], function_set.limits[1]),
+                show = False
+                )
+            self.move_sympyplot_to_axes(p1, (ax,))
+        self._plot = ax
+        #ax.legend = True
+        #self._plot.legend = True  
+        #self._plot.tight_layout() 
+    
+        return 
+
 
     def generate_3D_symbolic(self, function_set):
         #x, y, z = smp.symbols('x y z')
@@ -63,25 +73,26 @@ class Diagram:
     def generate_diagram(self, function_set):
         
         try:
+            
             plt.switch_backend('Agg')   # without GUI initialization, not needed
+            fig , ax = plt.subplots()
             #figure = plt.figure()
-            plt.rcParams['figure.figsize'] = 5, 5
+            plt.rcParams['figure.figsize'] = 5 , 5
             plt.rcParams['legend.loc'] = 'upper right'
             max_vars = max([len(f.free_variables) for f in function_set.functions])
             if function_set.plot == "2D_points":
                 self.generate_2D_points(function_set)
             elif max_vars < 2:
-                self.generate_2D_symbolic(function_set)
+                self.generate_2D_symbolic(function_set, ax)
             elif max_vars < 3:
                 self.generate_3D_symbolic(function_set)
-            #self._plot.legend = True  
-            #self._plot.tight_layout()       
-            backend = self._plot.backend(self._plot)
-            
-            backend.process_series()
+      
+            plt.legend(loc='upper right')
+            plt.xlabel(function_set.free_vars)  # todo: welche free_vars (mit set.difference)
+            plt.tight_layout()
             buffer = BytesIO()
-            backend.fig.savefig(buffer, format="png", dpi=100)
-            #plt.savefig(buffer, format='png', dpi =100)
+            fig.savefig(buffer, format='png', dpi=70)
+            
             
             # Embed the result into html output
             self.figure = base64.b64encode(buffer.getbuffer()).decode("ascii")
