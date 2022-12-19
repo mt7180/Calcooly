@@ -3,7 +3,7 @@ from diagram import Diagram
 
 class Calcooly():
     def __init__(self)-> None:
-        self.key = "defaultkey"
+        self.plot = "symbolic"
         self.limits = []
         self.functions = []
         self._strategy = None
@@ -27,12 +27,13 @@ class Calcooly():
 
     def extract_keywords(self, expr: str)-> str:
         split_indx = expr.find(":") # if no ":" in expr: split_indx=-1
-        if ":" in expr: key = expr[:split_indx]
-        else: key = 'default_function'
-        self._strategy = keywords.keyword_map.get(key.lower())
+        if ":" in expr: self.key = expr[:split_indx]
+        else: self.key = 'default_function'
+        self._strategy = keywords.keyword_map.get(self.key.lower())
+        print("key: ", self.key)
         if not self._strategy:
-            self._err += 'key: ' + key + ' not known!'
-            raise ValueError(key)
+            self._err += 'key: ' + self.key + ' not known!'
+            raise ValueError(self.key)
         return expr[split_indx+1:]
     
     def parse_functions(self, expr):
