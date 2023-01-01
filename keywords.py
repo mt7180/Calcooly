@@ -2,6 +2,7 @@
 import numpy as np
 from sympy.parsing.sympy_parser import standard_transformations, convert_xor, implicit_multiplication, convert_equals_signs
 import sympy as smp
+import traceback
 
 from scipy.integrate import odeint
 
@@ -21,9 +22,9 @@ def default_function(expr, function_set)-> None:
             raise ValueError('no input given')
         input = [inp.strip() for inp in expr.split(';')]
         transformations = (standard_transformations 
-                          + (implicit_multiplication,) 
-                          + (convert_xor,) 
-                          + (convert_equals_signs,))
+                            + (implicit_multiplication,) 
+                            + (convert_xor,) 
+                            + (convert_equals_signs,))
         for inp in input:
             if not inp: # if current segment of ";"-seperated input is empty
                 continue
@@ -43,9 +44,11 @@ def default_function(expr, function_set)-> None:
             function_set.functions.append(Function(sol, inp, list(sol.free_symbols)))
             for free_var in sol.free_symbols:
                 function_set.free_vars.add(free_var)
-    except AttributeError:
+    except AttributeError or ValueError or TypeError:
         function_set._err += "parsing your function returned an error"
     except Exception as ex:
+        
+        print(traceback.format_exc())
         function_set._err += str(ex)
     print("errors: ",  function_set._err)
 

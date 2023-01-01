@@ -64,6 +64,4 @@ if __name__ == "__main__":
     print(keywords.keyword_map)
     raw_input = input("give function: ")
     app.parse_raw_input(raw_input)
-    print(app)
-    print(app.get_latex_functions())
     #diagram = app.get_diagram()
