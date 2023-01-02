@@ -17,7 +17,7 @@ class Calcooly():
         """get limit at the end of input_str: "x^2; e^x [-1, 4]
            if something went wrong, original input_str is returned
         """
-        if expr[-1] == ']':
+        if len(expr) > 0 and expr[-1] == ']':
             if '[' in expr:
                 split_indx = expr.rfind("[")
                 limits = expr[split_indx+1:-1]
