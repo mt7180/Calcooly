@@ -17,7 +17,7 @@ Notation Conventions and Manual:
 - You may give several functions at once, separated by **";"**.
 - Use only small letters for function variables.
 - To expand the input window for e.g. more complex systems of equations, press the "+" button
-- To specify the range of the x-axis, enter **limit[xmin, xmax]** at the end of the function. => "x^2; e^x [-1, 4]"
+- To specify the range of the x-axis/ x- and y-axis (3D), type **[xmin, xmax]** at the end of the function. => "x^2; e^x [-1, 4]"
 - Use the **keyword "Integral:"** to calculate the integral(s) of your function(s). => "Integral: x^2; e^x"
 - Use the **keyword "Derivative:"** to calculate the derivative(s) of your function(s). => "Derivative: x^2; e^x"
 - Use keyword **"ODE:"** for solving ordinary differential equations separated by ";" - each starting condition given after each differential equation, also seperated by ";"
@@ -47,27 +47,21 @@ Files:
 ------
 
 - app.py: Flask web application, main program, it has the routes "/" (and "/index/<fid>"), "/history" and "/notation"
-- myFunctions.py: holds the class "Function", which represents a single function with some instance variables
-    - fun: parsed function
+- function.py: holds the class "Function", which represents a single function with some instance variables
+    - symbolic_function: parsed function
+    - expr: user input
     - x: list of x-points if no function is given (for plotting ODE output)
     - y: list of y-points if no function is given (for plotting ODE output)
-    - tag: optional tag for extra functions to be processed
-    - num: # of function in function set
-    - free: list of free variables
-    - plot: flag for plotting into diagram
-- myFunctionSet.py: holds the class "FunctionSet", which represents the whole set of functions with class variable "last_id" and some instance variables
-and methods
-    - functionSet : list of functions stored in the functionset
-    - err: holds first error description, if an error occurs while processing the functions (is flashed to the index page)
-    - tag: when a keyword like Integral:, Derivative: or ODE: is given by the user, it is stored here
-    - limit: x-axis limit for diagram to be plotted
-
-    - add_function(self, fun, free, plot, tag=""): adds a function to the functionSet
-    - add_function_withpoints(self, x, y, ode_list, plot, tag): adds a function with x/ y points to the functionSet
-    - functions2diagram(self): draws diagram for set of functions, returns: (out, fig64, True/False)
-    - input2functionset(self, input_raw): parse raw input string and put functions to function set
-    - extrafunc(self, input_raw): parse input for keywords for extra-function and give tags/ call extra-functions
-    - ode2functionset(self, input_raw): Parse, calculate and put ode into Function set
+    - free_variables: list of free variables
+    - plot: flag for plotting the function into the diagram
+- calcooly.py: holds the class "Calcooly", which parses the user input and stores the whole set of functions 
+    - functions : list of stored functions
+    - plot: detected plot style (symbolic function or points) is stored here
+    - limits: axis-limits for the plotted diagram
+    - _err: holds error description, if an error occurs while processing the functions (is flashed to the index page)
+    - _strategy: after extracting keywords from the user input, the solving strategy is stored here (Strategy Pattern)
+- keywords.py: holds the solving strategies in a separate dictionary called "keyword_map", these solving strategies are then assigned in calcooly.py after parsing user input. Strategy Pattern is used to make it easy to add new features/ keywords. The keyword_map is automatically filled with all keyword functions given in the file.
+- diagram.py: holds the class "Diagram" which generates the specific diagram (2D or 3D) from the given functions 
 
 templates:
 - index.html: starting and input page
